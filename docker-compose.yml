@@ -1,0 +1,31 @@
+version: '2'
+services:
+    server:
+        image: webdevops/apache:latest
+        container_name: shopware_composer_server
+        volumes_from:
+            - php
+        ports:
+            - 80:80
+        links:
+            - php
+        environment:
+            WEB_DOCUMENT_ROOT: /var/www/html
+            WEB_PHP_SOCKET: php:9000
+    php:
+        image: migoapps/docker-shopware:1.1.0
+        container_name: shopware_composer_php
+        volumes:
+            - ./:/var/www/html:cached
+        links:
+            - db
+    db:
+        image: mysql:latest
+        container_name: shopware_composer_db
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_DATABASE: shopware
+            MYSQL_USER: db
+            MYSQL_PASSWORD: db
